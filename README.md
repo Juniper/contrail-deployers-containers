@@ -17,3 +17,4 @@ In all folders Dockerfile must contain COPY directive. It must copy all content 
 Each deployer is packed into container as a snapshot to some point of time/state of original repository. User can run any deployer’s container and use saved state to run deployment:
 ```docker run -it --network host CONTAINER_IMAGE```
 where CONTAINER_IMAGE is a name with tag or image ID. When container is run user can exec deployer's specific commands as described in documentation of the deployer - run ansible, helm or whatever. The process is not different from standard run when deployer's code is cloned locally.
+
