@@ -4,7 +4,7 @@ All containers or individual container can be built in a same way as main contai
 
 This repository doesn’t have scripts to prepare docker registry so user should specify CONTRAIL_REGISTRY with correct value for ‘docker push’ command. By default IP of default interface (detected by default route) with port 5000 is used.
 
-CONTRAIL_CONTAINER_TAG (or CONTRAIL_VERSION if first is absent) is used as a tag for new images. ‘5.0’ is by default for now.
+CONTRAIL_DEPLOYERS_TAG (or CONTRAIL_VERSION if first is absent) is used as a tag for new images. ‘5.0’ is by default for now.
 
 Container folder contains Dockerfile that is used for build process. The Dockerfile contains RUN directive with commands that install all needed packages for deployer’s run. Deployers' sources used for building container are automatically cloned during build process, unless some pre-git-cloned sources are copied into 'src' folder before the build which allows using local copies of deployer's repos.
 
