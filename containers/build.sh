@@ -1,5 +1,5 @@
 #!/bin/bash
-# Builds containers. Takes CONTRAIL_REGISTRY, CONTRAIL_CONTAINER_TAG, LINUX_DISTR, LINUX_DISTR_VER from environment.
+# Builds containers. Takes CONTRAIL_REGISTRY, CONTRAIL_DEPLOYERS_TAG, CONTRAIL_CONTAINER_TAG, LINUX_DISTR, LINUX_DISTR_VER from environment.
 # Parameters:
 # path: relative path (from this directory) to module(s) for selective build. Example: ./build.sh kolla-ansible-deployer
 #   if it's omitted then script will build all
@@ -18,6 +18,7 @@ opts="$@"
 echo "INFO: Target platform: $LINUX_DISTR:$LINUX_DISTR_VER"
 echo "INFO: Contrail registry: $CONTRAIL_REGISTRY"
 echo "INFO: Contrail container tag: $CONTRAIL_CONTAINER_TAG"
+echo "INFO: Contrail deployers tag: $CONTRAIL_DEPLOYERS_TAG"
 
 if [ -n "$opts" ]; then
   echo "INFO: Options: $opts"
@@ -40,7 +41,7 @@ function process_container() {
   local container_name="contrail-${container_name}"
   echo "INFO: Building $container_name"
 
-  tag="${CONTRAIL_CONTAINER_TAG}"
+  tag="${CONTRAIL_DEPLOYERS_TAG}"
   local build_arg_opts=''
   if [[ "$docker_ver" < '17.06' ]] ; then
     # old docker can't use ARG-s before FROM:
@@ -48,13 +49,13 @@ function process_container() {
     cat ${docker_file} | awk '{if(ncmt!=1 && $1=="ARG"){print("#"$0)}else{print($0)}; if($1=="FROM"){ncmt=1}}' > ${docker_file}.nofromargs
     # and then change FROM-s that uses ARG-s
     sed -i \
-      -e "s|^FROM \${CONTRAIL_REGISTRY}/\([^:]*\):\${CONTRAIL_CONTAINER_TAG}|FROM ${CONTRAIL_REGISTRY}/\1:${tag}|" \
+      -e "s|^FROM \${DEPLOYERS_BASE_CONTAINER}|FROM ${DEPLOYERS_BASE_CONTAINER}|" \
       -e "s|^FROM \$LINUX_DISTR:\$LINUX_DISTR_VER|FROM $LINUX_DISTR:$LINUX_DISTR_VER|" \
       ${docker_file}.nofromargs
     docker_file="${docker_file}.nofromargs"
   fi
   build_arg_opts+=" --build-arg CONTRAIL_REGISTRY=${CONTRAIL_REGISTRY}"
-  build_arg_opts+=" --build-arg CONTRAIL_CONTAINER_TAG=${tag}"
+  build_arg_opts+=" --build-arg DEPLOYERS_BASE_CONTAINER=${DEPLOYERS_BASE_CONTAINER}"
   build_arg_opts+=" --build-arg LINUX_DISTR_VER=${LINUX_DISTR_VER}"
   build_arg_opts+=" --build-arg LINUX_DISTR=${LINUX_DISTR}"
   build_arg_opts+=" --build-arg CONTAINER_NAME=${container_name}"
