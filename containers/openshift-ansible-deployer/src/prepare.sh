@@ -5,6 +5,10 @@ yum install -y git
 cd /root
 [ -d openshift-ansible ] || git clone https://github.com/Juniper/openshift-ansible -b master
 
+pushd openshift-ansible
+git branch -a -vv
+popd
+
 rm -rf openshift-ansible3.7
 cp -R openshift-ansible openshift-ansible3.7
 pushd openshift-ansible3.7
