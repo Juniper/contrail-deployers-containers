@@ -1,5 +1,5 @@
 #!/bin/bash
-# Builds containers. Takes CONTRAIL_REGISTRY, CONTRAIL_DEPLOYERS_TAG, CONTRAIL_CONTAINER_TAG, LINUX_DISTR, LINUX_DISTR_VER from environment.
+# Builds containers. Takes CONTRAIL_REGISTRY, CONTRAIL_DEPLOYERS_TAG, LINUX_DISTR, LINUX_DISTR_VER from environment.
 # Parameters:
 # path: relative path (from this directory) to module(s) for selective build. Example: ./build.sh kolla-ansible-deployer
 #   if it's omitted then script will build all
@@ -19,6 +19,8 @@ echo "INFO: Target platform: $LINUX_DISTR:$LINUX_DISTR_VER"
 echo "INFO: Contrail registry: $CONTRAIL_REGISTRY"
 echo "INFO: Base container for deployers: $DEPLOYERS_BASE_CONTAINER"
 echo "INFO: Contrail deployers tag: $CONTRAIL_DEPLOYERS_TAG"
+echo "INFO: Contrail generic base extra rpms: $GENERAL_EXTRA_RPMS"
+echo "INFO: yum additional repos to enable: $YUM_ENABLE_REPOS"
 
 if [ -n "$opts" ]; then
   echo "INFO: Options: $opts"
@@ -50,15 +52,21 @@ function process_container() {
     # and then change FROM-s that uses ARG-s
     sed -i \
       -e "s|^FROM \${DEPLOYERS_BASE_CONTAINER}|FROM ${DEPLOYERS_BASE_CONTAINER}|" \
+      -e "s|^FROM \${CONTRAIL_REGISTRY}/\([^:]*\):\${CONTRAIL_DEPLOYERS_TAG}|FROM ${CONTRAIL_REGISTRY}/\1:${tag}|" \
       -e "s|^FROM \$LINUX_DISTR:\$LINUX_DISTR_VER|FROM $LINUX_DISTR:$LINUX_DISTR_VER|" \
       ${docker_file}.nofromargs
     docker_file="${docker_file}.nofromargs"
   fi
   build_arg_opts+=" --build-arg CONTRAIL_REGISTRY=${CONTRAIL_REGISTRY}"
+  build_arg_opts+=" --build-arg CONTRAIL_DEPLOYERS_TAG=${CONTRAIL_DEPLOYERS_TAG}"
   build_arg_opts+=" --build-arg DEPLOYERS_BASE_CONTAINER=${DEPLOYERS_BASE_CONTAINER}"
   build_arg_opts+=" --build-arg LINUX_DISTR_VER=${LINUX_DISTR_VER}"
   build_arg_opts+=" --build-arg LINUX_DISTR=${LINUX_DISTR}"
   build_arg_opts+=" --build-arg CONTAINER_NAME=${container_name}"
+  build_arg_opts+=" --build-arg GENERAL_EXTRA_RPMS=\"${GENERAL_EXTRA_RPMS}\""
+  build_arg_opts+=" --build-arg YUM_ENABLE_REPOS=\"$YUM_ENABLE_REPOS\""
+  [ -n "$PYTHON_PIP_RPM" ] && build_arg_opts+=" --build-arg PYTHON_PIP_RPM=$PYTHON_PIP_RPM"
+  [ -n "$PYTHON_PIP_VENV" ] && build_arg_opts+=" --build-arg PYTHON_PIP_VENV=$PYTHON_PIP_VENV"
 
   local logfile='build-'$container_name'.log'
   docker build -t ${CONTRAIL_REGISTRY}'/'${container_name}:${tag} \
