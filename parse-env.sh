@@ -17,3 +17,8 @@ host_ip=`ip address show dev $default_interface | head -3 | tail -1 | tr "/" " "
 export CONTRAIL_REGISTRY=${CONTRAIL_REGISTRY:-"$host_ip:5000"}
 export CONTRAIL_DEPLOYERS_TAG=${CONTRAIL_DEPLOYERS_TAG:-${CONTRAIL_VERSION:-'5.0'}}
 export DEPLOYERS_BASE_CONTAINER=${DEPLOYERS_BASE_CONTAINER:-"$LINUX_DISTR:$LINUX_DISTR_VER"}
+
+if [[ "$LINUX_DISTR" == 'rhel'* ]] ; then
+  export PYTHON_PIP_RPM='python27-python-pip'
+  export PYTHON_PIP_VENV='/opt/rh/python27/enable'
+fi
