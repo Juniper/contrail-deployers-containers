@@ -1,7 +1,5 @@
 #!/bin/bash -e
 
-yum install -y git
-
 cd /root
 [ -d openshift-ansible ] || git clone https://github.com/Juniper/openshift-ansible -b master
 
