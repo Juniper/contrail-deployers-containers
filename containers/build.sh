@@ -50,14 +50,18 @@ function process_container() {
     # and then change FROM-s that uses ARG-s
     sed -i \
       -e "s|^FROM \${DEPLOYERS_BASE_CONTAINER}|FROM ${DEPLOYERS_BASE_CONTAINER}|" \
+      -e "s|^FROM \${CONTRAIL_REGISTRY}/\([^:]*\):\${CONTRAIL_CONTAINER_TAG}|FROM ${CONTRAIL_REGISTRY}/\1:${tag}|" \
       -e "s|^FROM \$LINUX_DISTR:\$LINUX_DISTR_VER|FROM $LINUX_DISTR:$LINUX_DISTR_VER|" \
       ${docker_file}.nofromargs
     docker_file="${docker_file}.nofromargs"
   fi
   build_arg_opts+=" --build-arg CONTRAIL_REGISTRY=${CONTRAIL_REGISTRY}"
+  build_arg_opts+=" --build-arg CONTRAIL_CONTAINER_TAG=${tag}"
   build_arg_opts+=" --build-arg DEPLOYERS_BASE_CONTAINER=${DEPLOYERS_BASE_CONTAINER}"
   build_arg_opts+=" --build-arg LINUX_DISTR_VER=${LINUX_DISTR_VER}"
   build_arg_opts+=" --build-arg LINUX_DISTR=${LINUX_DISTR}"
+  [ -n "$PYTHON_PIP_RPM" ] && build_arg_opts+=" --build-arg PYTHON_PIP_RPM=$PYTHON_PIP_RPM"
+  [ -n "$PYTHON_PIP_VENV" ] && build_arg_opts+=" --build-arg PYTHON_PIP_VENV=$PYTHON_PIP_VENV"
   build_arg_opts+=" --build-arg CONTAINER_NAME=${container_name}"
 
   local logfile='build-'$container_name'.log'
