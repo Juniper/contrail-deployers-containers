@@ -17,6 +17,7 @@ opts="$@"
 
 echo "INFO: Target platform: $LINUX_DISTR:$LINUX_DISTR_VER"
 echo "INFO: Contrail registry: $CONTRAIL_REGISTRY"
+echo "INFO: Contrail registry push (0=no,1=yes): $CONTRAIL_REGISTRY_PUSH"
 echo "INFO: Base container for deployers: $DEPLOYERS_BASE_CONTAINER"
 echo "INFO: Contrail deployers tag: $CONTRAIL_DEPLOYERS_TAG"
 
@@ -65,7 +66,7 @@ function process_container() {
   local logfile='build-'$container_name'.log'
   docker build -t ${CONTRAIL_REGISTRY}'/'${container_name}:${tag} \
     ${build_arg_opts} -f $docker_file ${opts} $dir |& tee $logfile
-  if [ ${PIPESTATUS[0]} -eq 0 ]; then
+  if [ ${PIPESTATUS[0]} -eq 0 -a "$CONTRAIL_REGISTRY_PUSH" -eq 1 ]; then
     docker push ${CONTRAIL_REGISTRY}'/'${container_name}:${tag} |& tee -a $logfile
     if [ ${PIPESTATUS[0]} -eq 0 ]; then
       rm $logfile
