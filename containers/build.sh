@@ -32,6 +32,18 @@ echo "INFO: Docker version: $docker_ver"
 was_errors=0
 op='build'
 
+function append_log_file() {
+  local logfile=$1
+  local line=''
+  while read line ; do
+    if [[ "${CONTRAIL_KEEP_LOG_FILES,,}" != 'true' ]] ; then
+      echo "$line" | tee -a $logfile
+    else
+      echo "$line" >> $logfile
+    fi
+  done
+}
+
 function process_container() {
   local dir=${1%/}
   local docker_file=$2
@@ -41,7 +53,9 @@ function process_container() {
   fi
   local container_name=`echo ${dir#"./"} | tr "/" "-"`
   local container_name="contrail-${container_name}"
+  local logfile="build-${container_name}.log"
   echo "INFO: Building $container_name"
+  echo "INFO: Building $container_name" | append_log_file $logfile
 
   tag="${CONTRAIL_DEPLOYERS_TAG}"
   local build_arg_opts=''
@@ -64,18 +78,22 @@ function process_container() {
   build_arg_opts+=" --build-arg LINUX_DISTR=${LINUX_DISTR}"
   build_arg_opts+=" --build-arg CONTAINER_NAME=${container_name}"
 
-  local logfile='build-'$container_name'.log'
   docker build -t ${CONTRAIL_REGISTRY}'/'${container_name}:${tag} \
-    ${build_arg_opts} -f $docker_file ${opts} $dir |& tee $logfile
+    ${build_arg_opts} -f $docker_file ${opts} $dir 2>&1 | append_log_file $logfile
   was_errors=${PIPESTATUS[0]}
   if [ $was_errors -eq 0 -a $CONTRAIL_REGISTRY_PUSH -eq 1 ] ; then
-    docker push ${CONTRAIL_REGISTRY}'/'${container_name}:${tag} |& tee -a $logfile
+    docker push ${CONTRAIL_REGISTRY}'/'${container_name}:${tag} 2>&1 | append_log_file $logfile
     was_errors=${PIPESTATUS[0]}
   fi
   if [ $was_errors -eq 0 ]; then
     if [[ "${CONTRAIL_KEEP_LOG_FILES,,}" != 'true' ]] ; then
       rm -f $logfile
     fi
+    echo "INFO: Building $container_name finished successfully"
+    echo "INFO: Building $container_name finished successfully" | append_log_file $logfile
+  else
+    echo "ERROR: Building $container_name failed"
+    echo "ERROR: Building $container_name failed" | append_log_file $logfile
   fi
 }
 
@@ -120,7 +138,7 @@ process_dir $path
 popd &>/dev/null
 
 if [ $was_errors -ne 0 ]; then
-  echo "ERROR: Failed to build some containers, see log files:"
-  ls -l $my_dir/*.log
+  logs=$(ls -l $my_dir/*.log)
+  echo -e "ERROR: Failed to build some containers, see log files:\n$logs" >&2
   exit 1
 fi
