@@ -1,6 +1,7 @@
-#!/bin/bash -e
+#!/bin/bash -ex
 
 cd /root
+ls -l
 [ -d openshift-ansible ] || git clone https://github.com/Juniper/openshift-ansible -b master
 
 rm -rf openshift-ansible3.7

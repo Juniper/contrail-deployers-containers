@@ -78,6 +78,8 @@ function process_container() {
   build_arg_opts+=" --build-arg LINUX_DISTR=${LINUX_DISTR}"
   build_arg_opts+=" --build-arg CONTAINER_NAME=${container_name}"
 
+  ls -l $dir
+  ls -l $dir/src || /bin/true
   docker build -t ${CONTRAIL_REGISTRY}'/'${container_name}:${tag} \
     ${build_arg_opts} -f $docker_file ${opts} $dir 2>&1 | append_log_file $logfile
   was_errors=${PIPESTATUS[0]}
