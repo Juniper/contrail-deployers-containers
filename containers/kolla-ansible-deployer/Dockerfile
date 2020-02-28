@@ -9,7 +9,7 @@ ARG CONTAINER_NAME
 COPY src /root/
 
 RUN yum install -y python-ipaddress git sudo vim gcc sshpass openssl python-devel libffi-devel openssl-devel && \
-    pip --no-cache-dir install --upgrade 'ansible==2.7.11' "cffi<1.13" pycrypto oslo_utils oslo_config jinja2 && \
+    pip --no-cache-dir install --upgrade 'ansible==2.7.11' "cffi<1.13" "pycrypto==2.6.1" "oslo_utils==3.42.1" "oslo_config==7.0.0" "jinja2==2.11.1" && \
     /root/prepare.sh && \
     yum clean all -y && \
     rm -rf /var/cache/yum
