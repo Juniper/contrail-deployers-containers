@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c73a0b7b_c9c08081",
+        "filename": "containers/kolla-ansible-deployer/Dockerfile",
+        "patchSetId": 2
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 437
+      },
+      "writtenOn": "2020-02-28T10:21:53Z",
+      "side": 1,
+      "message": "PLease check the log to see which additional packages are installed by dependencies and pin them as well.",
+      "range": {
+        "startLine": 12,
+        "startChar": 41,
+        "endLine": 12,
+        "endChar": 147
+      },
+      "revId": "06559d39a92a2606ed013d003ebb0435c1043f72",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": true
+    }
+  ]
+}
