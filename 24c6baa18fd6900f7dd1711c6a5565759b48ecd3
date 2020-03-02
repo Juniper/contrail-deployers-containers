@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "cc987082_474472c5",
+        "filename": "containers/kolla-ansible-deployer/Dockerfile",
+        "patchSetId": 3
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 382
+      },
+      "writtenOn": "2020-03-02T09:50:33Z",
+      "side": 1,
+      "message": "what is \"oslo\u003d\u003dconfig\" \"oslo\u003d\u003dutils\" ?",
+      "range": {
+        "startLine": 14,
+        "startChar": 94,
+        "endLine": 14,
+        "endChar": 122
+      },
+      "revId": "24c6baa18fd6900f7dd1711c6a5565759b48ecd3",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": true
+    }
+  ]
+}
