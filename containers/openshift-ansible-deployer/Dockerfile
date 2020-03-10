@@ -11,8 +11,8 @@ COPY src /root/
 RUN yum install -y git python-pip && \
     pip --no-cache-dir install --upgrade \
     "MarkupSafe==1.1.1" "PyYAML==5.3" "ansible==2.6.18" "bcrypt==3.1.7" "cffi==1.12.3" "cryptography==2.8" \
-    "enum34==1.1.9" "ipaddress==1.0.23" "jinja2==2.11.1" "paramiko==2.7.1" "pycparser==2.20" "pynacl==1.3.0" \
-    "setuptools==45.2.0" "six==1.14.0" && \
+    "enum34==1.1.9" "jinja2==2.11.1" "paramiko==2.7.1" "pycparser==2.20" "pynacl==1.3.0" \
+    "setuptools==44.0.0" "six==1.14.0" && \
     /root/prepare.sh && \
     yum clean all -y && \
     rm -rf /var/cache/yum
