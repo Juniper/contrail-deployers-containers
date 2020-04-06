@@ -26,7 +26,7 @@ if [ -n "$opts" ]; then
   echo "INFO: Options: $opts"
 fi
 
-docker_ver=$(docker -v | awk -F' ' '{print $3}' | sed 's/,//g')
+docker_ver=$(sudo docker -v | awk -F' ' '{print $3}' | sed 's/,//g')
 echo "INFO: Docker version: $docker_ver"
 
 was_errors=0
@@ -78,11 +78,11 @@ function process_container() {
   build_arg_opts+=" --build-arg LINUX_DISTR=${LINUX_DISTR}"
   build_arg_opts+=" --build-arg CONTAINER_NAME=${container_name}"
 
-  docker build -t ${CONTRAIL_REGISTRY}'/'${container_name}:${tag} \
+  sudo docker build --network host -t ${CONTRAIL_REGISTRY}'/'${container_name}:${tag} \
     ${build_arg_opts} -f $docker_file ${opts} $dir 2>&1 | append_log_file $logfile
   was_errors=${PIPESTATUS[0]}
   if [ $was_errors -eq 0 -a $CONTRAIL_REGISTRY_PUSH -eq 1 ] ; then
-    docker push ${CONTRAIL_REGISTRY}'/'${container_name}:${tag} 2>&1 | append_log_file $logfile
+    sudo docker push ${CONTRAIL_REGISTRY}'/'${container_name}:${tag} 2>&1 | append_log_file $logfile
     was_errors=${PIPESTATUS[0]}
   fi
   if [ $was_errors -eq 0 ]; then
