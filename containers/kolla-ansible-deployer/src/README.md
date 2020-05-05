@@ -1,2 +1,0 @@
-This folder contains contrail-kolla-ansible and contrail-ansible-deployer repositories.
-They can be used to deploy Contrail + OpenStack ( https://github.com/Juniper/contrail-ansible-deployer/wiki/Contrail-with-Openstack-Kolla ).
