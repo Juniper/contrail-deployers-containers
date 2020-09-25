@@ -10,7 +10,7 @@ COPY src /root/
 
 RUN yum install -y git && \
     curl https://bootstrap.pypa.io/get-pip.py | python2 - 'pip==20.1' && \
-    pip --no-cache-dir install --upgrade 'ansible==2.6.18' && \
+    pip --no-cache-dir install --upgrade 'ansible==2.6.18' "cffi<1.13" && \
     /root/prepare.sh && \
     yum clean all -y && \
     rm -rf /var/cache/yum

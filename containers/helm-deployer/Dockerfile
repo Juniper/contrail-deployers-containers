@@ -8,7 +8,7 @@ COPY src /root/
 
 RUN yum install -y sshpass git && \
     # use the same ansible verion as upstream
-    pip --no-cache-dir install --upgrade setuptools "ansible==2.7.11" && \
+    pip --no-cache-dir install --upgrade setuptools "ansible==2.7.11" "cffi<1.13" && \
     /root/prepare.sh && \
     yum clean all -y && \
     rm -rf /var/cache/yum
