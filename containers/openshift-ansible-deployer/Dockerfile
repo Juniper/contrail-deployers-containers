@@ -8,8 +8,14 @@ ARG CONTAINER_NAME
 # Note: The directory itself is not copied, just its contents.
 COPY src /root/
 
+RUN set -xe \
+    && yum update \
+    && yum install python3-pip -y \
+    && yum install python-pip -y \
+    && pip --version
+
 RUN yum install -y git && \
-    curl https://bootstrap.pypa.io/get-pip.py | python2 - 'pip==20.1' && \
+    curl https://bootstrap.pypa.io/pip/2.7/get-pip.py | python2 - 'pip==20.1' && \
     pip --no-cache-dir install --upgrade 'ansible==2.6.18' "cffi<1.13" && \
     /root/prepare.sh && \
     yum clean all -y && \
